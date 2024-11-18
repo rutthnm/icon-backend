@@ -17,8 +17,9 @@ export class UsuariosController {
     return this.usuariosService.findAllAdmin();
   }
 
-  @Get(':id')
-  findOne(@Param('id') correo: string, contrasena: string) {
+  @Get(':correo/:contrasena')
+  findOne(@Param(':correo') correo: string, 
+  @Param(':contrasena') contrasena: string) {
     return this.usuariosService.findOneLogin(correo, contrasena);
   }
 
