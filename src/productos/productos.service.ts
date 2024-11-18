@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,29 +12,55 @@ export class ProductosService {
     private readonly productoRepository: Repository<Productos>,
   ) {}
 
-  create(createProductoDto: CreateProductoDto) {
+  
+  async create(createProductoDto: CreateProductoDto) {
     const newProducto = this.productoRepository.create(createProductoDto);
-
-    return this.productoRepository.save(newProducto);
+    await this.productoRepository.save(newProducto);
+    return { message: 'Producto creado exitosamente', producto: newProducto };
   }
 
-  findAll() {
-    return this.productoRepository.find();
+ 
+  async findAll() {
+    return await this.productoRepository.find();
   }
 
-  findOne(id: string) {
-    return this.productoRepository.findOne({
-      where: {
-        idProduto: id,
-      },
+ 
+  async findOne(id: string) {
+    const producto = await this.productoRepository.findOne({ where: { idProduto: id } });
+
+    if (!producto) {
+      throw new NotFoundException(`Producto con id ${id} no encontrado`);
+    }
+
+    return producto;
+  }
+
+  
+  async update(id: string, updateProductoDto: UpdateProductoDto) {
+    const producto = await this.productoRepository.preload({
+      idProduto: id, // Usamos 'idProduto' para encontrar el producto
+      ...updateProductoDto, // Asignamos los valores que queremos actualizar
     });
+
+    if (!producto) {
+      throw new NotFoundException(`Producto con id ${id} no encontrado`);
+    }
+
+    await this.productoRepository.save(producto); 
+    return { message: 'Producto actualizado exitosamente', producto };
   }
 
-  update(id: string, updateProductoDto: UpdateProductoDto) {
-    return this.productoRepository.update(id, updateProductoDto);
-  }
+  
+  async remove(id: string) {
+    const producto = await this.productoRepository.findOne({ where: { idProduto: id } });
 
-  remove(id: string) {
-    return this.productoRepository.update(id, { estado: false });
+    if (!producto) {
+      throw new NotFoundException(`Producto con id ${id} no encontrado`);
+    }
+
+    // Cambiar el estado del producto a false en lugar de eliminarlo
+    producto.estado = false;
+    await this.productoRepository.save(producto);
+    return { message: 'Producto eliminado exitosamente', producto };
   }
 }

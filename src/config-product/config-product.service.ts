@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Categoria } from './entities/categoria.entity';
 import { Repository } from 'typeorm';
@@ -26,79 +26,161 @@ export class ConfigProductService {
 
   // CATEGORIA
 
-  createCategoria(createCategoriaDto: CreateCategoriaDto) {
+  async createCategoria(createCategoriaDto: CreateCategoriaDto) {
     const newCategoria = this.categoriaRepository.create(createCategoriaDto);
-    return this.categoriaRepository.save(newCategoria);
+    await this.categoriaRepository.save(newCategoria);
+    return { message: 'categoria creada  con exito ', producto: newCategoria };
+  }
+  
+  //listar todas las categorias de un producto
+  async findAllCategoria() {
+    return await this.categoriaRepository.find();
   }
 
-  findAllCategoria() {
-    return this.categoriaRepository.find();
+  //obtener una categoria  por id 
+   async findOneCategoria(id: string) {
+    const producto = await this.categoriaRepository.findOne({ where: { idCategoria: id } });
+
+    if (!producto) {
+      throw new NotFoundException(`categoria  con id ${id} no encontrada`);
+    }
+
+    return producto;
   }
 
-  findOneCategoria(id: string) {
-    return this.categoriaRepository.findOne({
-      where: { idCategoria: id },
+   async updateCategoria(id: string, updateCategoriaDto: UpdateCategoriaDto) {
+    const categoria = await this.categoriaRepository.preload({
+      idCategoria: id, // Usamos 'idProduto' para encontrar el producto
+      ...updateCategoriaDto, // Asignamos los valores que queremos actualizar
     });
-  }
 
-  updateCategoria(id: string, updateCategoriaDto: UpdateCategoriaDto) {
-    return this.categoriaRepository.update(id, updateCategoriaDto);
+    if (!categoria) {
+      throw new NotFoundException(` categoria con id ${id} no encontrado`);
+    }
+
+    await this.categoriaRepository.save(categoria); 
+    return { message: 'categoria  actualizada exitosamente', categoria };
   }
 
   // Soft delete: Actualiza estado a false
-  removeCategoria(id: string) {
-    return this.categoriaRepository.update(id, { estado: false });
+   async removeCategoria(id: string) {
+  
+    const categoria = await this.categoriaRepository.findOne({ where: { idCategoria: id } });
+
+    if (!categoria) {
+      throw new NotFoundException(`categoria  con id ${id} no encontrada`);
+    }
+
+    // Cambiar el estado de la categoria false en lugar de eliminarlo
+    categoria.estado = false;
+    await this.categoriaRepository.save(categoria); 
+    return { message: 'categoria eliminada exitosamente', categoria };
   }
+
+
+
+
+
 
   // MATERIAL
 
-  createMaterial(createMaterialDto: CreateMaterialDto) {
+   async createMaterial(createMaterialDto: CreateMaterialDto) {
     const newMaterial = this.materialRepository.create(createMaterialDto);
-    return this.materialRepository.save(newMaterial);
+    await this.materialRepository.save(newMaterial);
+    return { message: 'material  creado   con exito ', material: newMaterial };
   }
 
   findAllMaterial() {
     return this.materialRepository.find();
   }
 
-  findOneMaterial(id: string) {
-    return this.materialRepository.findOne({
-      where: { idMaterial: id },
-    });
+   async findOneMaterial(id: string) {
+    const material = await this.materialRepository.findOne({ where: { idMaterial: id } });
+
+    if (!material) {
+      throw new NotFoundException(`material  con id ${id} no encontrado`);
+    }
+
+    return material;
   }
 
-  updateMaterial(id: string, updateMaterialDto: UpdateMaterialDto) {
-    return this.materialRepository.update(id, updateMaterialDto);
+   async updateMaterial(id: string, updateMaterialDto: UpdateMaterialDto) {
+    const material = await this.materialRepository.preload({
+      idMaterial: id, // Usamos 'idProduto' para encontrar el producto
+      ...updateMaterialDto, // Asignamos los valores que queremos actualizar
+    });
+
+    if (!material) {
+      throw new NotFoundException(` material  con id ${id} no encontrado`);
+    }
+
+    await this.materialRepository.save(material); 
+    return { message: 'material actualizado exitosamente', material };
   }
 
   // Soft delete: Actualiza estado a false
-  removeMaterial(id: string) {
-    return this.materialRepository.update(id, { estado: false });
+   async removeMaterial(id: string) {
+    const material = await this.materialRepository.findOne({ where: { idMaterial: id } });
+
+    if (!material) {
+      throw new NotFoundException(`material  con id ${id} no encontrado`);
+    }
+
+    // Cambiar el estado de la categoria false en lugar de eliminarlo
+    material.estado = false;
+    await this.materialRepository.save(material); 
+    return { message: 'material  eliminada exitosamente', material };;
   }
 
   // PRESENTACION
 
-  createPresentacion(createPresentacionDto: CreatePresentacionDto) {
+   async createPresentacion(createPresentacionDto: CreatePresentacionDto) {
     const newPresentacion = this.presentacionRepository.create(createPresentacionDto);
-    return this.presentacionRepository.save(newPresentacion);
+    await this.presentacionRepository.save(newPresentacion);
+    return { message: 'Presentancion   creada   con exito ', presentacion: newPresentacion };
   }
 
   findAllPresentacion() {
     return this.presentacionRepository.find();
   }
 
-  findOnePresentacion(id: string) {
-    return this.presentacionRepository.findOne({
-      where: { idPresentacion: id },
+   async findOnePresentacion(id: string) {
+    const presentacion = await this.presentacionRepository.findOne({ where: { idPresentacion: id } });
+
+    if (!presentacion) {
+      throw new NotFoundException(`presentacion  con id ${id} no encontrada`);
+    }
+
+    return presentacion;
+  }
+
+
+
+    async updatePresentacion(id: string, updatePresentacionDto: UpdatePresentacionDto) {
+    const presentacion = await this.presentacionRepository.preload({
+      idPresentacion: id, // Usamos 'idProduto' para encontrar el producto
+      ...updatePresentacionDto, // Asignamos los valores que queremos actualizar
     });
+
+    if (!presentacion) {
+      throw new NotFoundException(` presentacion  con id ${id} no encontrada`);
+    }
+
+    await this.presentacionRepository.save(presentacion); 
+    return { message: ' presentacion  actualizada exitosamente', presentacion };
   }
 
-  updatePresentacion(id: string, updatePresentacionDto: UpdatePresentacionDto) {
-    return this.presentacionRepository.update(id, updatePresentacionDto);
-  }
+  
+   async removePresentacion(id: string) {
+    const  presentacion = await this.presentacionRepository.findOne({ where: { idPresentacion: id } });
 
-  // veriificar con paquito si solo desactiva el estado o quiere borrado :(
-  removePresentacion(id: string) {
-    return this.presentacionRepository.update(id, { estado: false });
+    if (!presentacion) {
+      throw new NotFoundException(`presentacion  con id ${id} no encontrada`);
+    }
+
+    
+    presentacion.estado = false;
+    await this.presentacionRepository.save(presentacion); 
+    return { message: 'presentacion  eliminada exitosamente', presentacion };;
   }
 }
