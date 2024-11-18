@@ -8,16 +8,4 @@ export class UpdateUsuarioDto {
   @IsOptional()
   @IsString()
   contrasena?: string;
-
-  @IsOptional()
-  @IsString()
-  rol?: string;
-
-  @IsOptional()
-  @IsString()
-  idPersona?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  estado?: boolean;
 }
