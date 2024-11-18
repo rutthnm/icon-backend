@@ -20,3 +20,4 @@ export class Usuario {
   @Column('boolean', { default: true })
   estado: boolean;
 }
+

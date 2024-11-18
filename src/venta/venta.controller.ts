@@ -22,23 +22,23 @@ export class VentaController {
   }
 
   //DETALLE
-  @Post()
+  @Post('detalle')
   createDetalleVenta(@Body() createDetalleVentaDto: CreateDetalleVentaDto) {
     return this.ventaService.createdetalleVenta(createDetalleVentaDto);
   }
 
-  @Get(':id')
+  @Get('detalle/:id')
   findOneDetalleVenta(@Param('id') id: string) {
     return this.ventaService.findOnedetalleVenta(id);
   }
 
   //COMPROBANTE
-  @Post()
+  @Post('comprobante')
   createComprobante(@Body() createComprobanteDto: CreateComprobanteDto) {
     return this.ventaService.createComprobante(createComprobanteDto);
   }
 
-  @Get(':id')
+  @Get('comprobante/:id')
   findOneComprobante(@Param('id') id: string) {
     return this.ventaService.findOneComprobante(id);
   }

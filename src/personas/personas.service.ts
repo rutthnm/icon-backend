@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePersonaDto } from './dto/create-persona.dto';
 import { UpdatePersonaDto } from './dto/update-persona.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,16 +12,52 @@ export class PersonasService {
     private readonly personaRepository: Repository<Persona>,
   ) {}
 
-  create(createPersonaDto: CreatePersonaDto) {
+  // Crear una nueva persona
+  async create(createPersonaDto: CreatePersonaDto) {
     const newPersona = this.personaRepository.create(createPersonaDto);
-    return this.personaRepository.save(newPersona);
+    return await this.personaRepository.save(newPersona);
   }
 
-  update(id: string, updatePersonaDto: UpdatePersonaDto) {
-    return this.personaRepository.update(id, updatePersonaDto);
+  // Actualizar una persona
+  async update(id: string, updatePersonaDto: UpdatePersonaDto) {
+    const persona = await this.personaRepository.preload({
+      id, // Usamos 'id' para encontrar la persona, ya que 'id' es el UUID
+      ...updatePersonaDto, // Asignamos los valores que queremos actualizar
+    });
+
+    if (!persona) {
+      throw new NotFoundException(`Persona con id ${id} no encontrada`);
+    }
+
+    return this.personaRepository.save(persona); // Guarda los cambios
   }
 
-  remove(id: string) {
-    return this.personaRepository.update(id, { estado: false });
+  // Eliminar (o desactivar) una persona
+  async remove(id: string) {
+    const persona = await this.personaRepository.findOne({ where: { id } });
+
+    if (!persona) {
+      throw new NotFoundException(`Persona con id ${id} no encontrada`);
+    }
+
+    // Cambiar el estado de la persona a false en lugar de eliminarla
+    persona.estado = false;
+    return this.personaRepository.save(persona);
+  }
+
+  // Obtener todas las personas
+  async findAll() {
+    return this.personaRepository.find();
+  }
+
+  // Obtener una persona específica por ID
+  async findOne(id: string) {
+    const persona = await this.personaRepository.findOne({ where: { id } });
+
+    if (!persona) {
+      throw new NotFoundException(`Persona con id ${id} no encontrada`);
+    }
+
+    return persona;
   }
 }
