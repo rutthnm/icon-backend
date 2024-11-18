@@ -1,25 +1,25 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity()
+@Entity()  
 export class Persona {
-  @PrimaryGeneratedColumn('uuid')
-  idPersona: string;
+  @PrimaryGeneratedColumn('uuid')  
+  id: string; 
 
-  @Column('text')
+  @Column()  
   nombres: string;
 
-  @Column('text')
+  @Column()  
   apellidos: string;
 
-  @Column('text')
+  @Column()  
   documento: string;
 
-  @Column('text')
+  @Column()  
   nDocumento: string;
 
-  @Column('text')
+  @Column()  
   telefono: string;
 
-  @Column('boolean', { default: true })
+  @Column({ default: true })  
   estado: boolean;
 }

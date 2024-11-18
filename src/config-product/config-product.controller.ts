@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ConfigProductService } from './config-product.service';
 import {
   CreateCategoriaDto,
@@ -21,24 +13,23 @@ import {
 export class ConfigProductController {
   constructor(private readonly configProductService: ConfigProductService) {}
 
-  //CATEGORIA
-
-  @Post()
+  // CATEGORIA
+  @Post('categoria')
   createCategoria(@Body() createCategoriaDto: CreateCategoriaDto) {
     return this.configProductService.createCategoria(createCategoriaDto);
   }
 
-  @Get()
+  @Get('categoria')
   findAllCategoria() {
     return this.configProductService.findAllCategoria();
   }
 
-  @Get(':id')
+  @Get('categoria/:id')
   findOneCategoria(@Param('id') id: string) {
     return this.configProductService.findOneCategoria(id);
   }
 
-  @Patch(':id')
+  @Patch('categoria/:id')
   updateCategoria(
     @Param('id') id: string,
     @Body() updateCategoriaDto: UpdateCategoriaDto,
@@ -46,29 +37,28 @@ export class ConfigProductController {
     return this.configProductService.updateCategoria(id, updateCategoriaDto);
   }
 
-  @Delete(':id')
+  @Delete('categoria/:id')
   removeCategoria(@Param('id') id: string) {
     return this.configProductService.removeCategoria(id);
   }
 
-  //MATERIAL
-
-  @Post()
+  // MATERIAL
+  @Post('material')
   createMaterial(@Body() createMaterialDto: CreateMaterialDto) {
     return this.configProductService.createMaterial(createMaterialDto);
   }
 
-  @Get()
+  @Get('material')
   findAllMaterial() {
     return this.configProductService.findAllMaterial();
   }
 
-  @Get(':id')
+  @Get('material/:id')
   findOneMaterial(@Param('id') id: string) {
     return this.configProductService.findOneMaterial(id);
   }
 
-  @Patch(':id')
+  @Patch('material/:id')
   updateMaterial(
     @Param('id') id: string,
     @Body() updateMaterialDto: UpdateMaterialDto,
@@ -76,40 +66,36 @@ export class ConfigProductController {
     return this.configProductService.updateMaterial(id, updateMaterialDto);
   }
 
-  @Delete(':id')
+  @Delete('material/:id')
   removeMaterial(@Param('id') id: string) {
     return this.configProductService.removeMaterial(id);
   }
 
-  //PRESENTACION
-
-  @Post()
+  // PRESENTACION
+  @Post('presentacion')
   createPresentacion(@Body() createPresentacionDto: CreatePresentacionDto) {
     return this.configProductService.createPresentacion(createPresentacionDto);
   }
 
-  @Get()
+  @Get('presentacion')
   findAllPresentacion() {
     return this.configProductService.findAllPresentacion();
   }
 
-  @Get(':id')
+  @Get('presentacion/:id')
   findOnePresentacion(@Param('id') id: string) {
     return this.configProductService.findOnePresentacion(id);
   }
 
-  @Patch(':id')
+  @Patch('presentacion/:id')
   updatePresentacion(
     @Param('id') id: string,
     @Body() updatePresentacionDto: UpdatePresentacionDto,
   ) {
-    return this.configProductService.updatePresentacion(
-      id,
-      updatePresentacionDto,
-    );
+    return this.configProductService.updatePresentacion(id, updatePresentacionDto);
   }
 
-  @Delete(':id')
+  @Delete('presentacion/:id')
   removePresentacion(@Param('id') id: string) {
     return this.configProductService.removePresentacion(id);
   }

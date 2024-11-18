@@ -24,12 +24,10 @@ export class ConfigProductService {
     private readonly presentacionRepository: Repository<Presentacion>,
   ) {}
 
-  //CATEGORIA
+  // CATEGORIA
 
-  createCategoria(createConfigProductDto: CreateCategoriaDto) {
-    const newCategoria = this.categoriaRepository.create(
-      createConfigProductDto,
-    );
+  createCategoria(createCategoriaDto: CreateCategoriaDto) {
+    const newCategoria = this.categoriaRepository.create(createCategoriaDto);
     return this.categoriaRepository.save(newCategoria);
   }
 
@@ -39,21 +37,20 @@ export class ConfigProductService {
 
   findOneCategoria(id: string) {
     return this.categoriaRepository.findOne({
-      where: {
-        idCategoria: id,
-      },
+      where: { idCategoria: id },
     });
   }
 
-  updateCategoria(id: string, updateConfigProductDto: UpdateCategoriaDto) {
-    return this.categoriaRepository.update(id, updateConfigProductDto);
+  updateCategoria(id: string, updateCategoriaDto: UpdateCategoriaDto) {
+    return this.categoriaRepository.update(id, updateCategoriaDto);
   }
 
+  // Soft delete: Actualiza estado a false
   removeCategoria(id: string) {
     return this.categoriaRepository.update(id, { estado: false });
   }
 
-  //MATERIAL
+  // MATERIAL
 
   createMaterial(createMaterialDto: CreateMaterialDto) {
     const newMaterial = this.materialRepository.create(createMaterialDto);
@@ -66,9 +63,7 @@ export class ConfigProductService {
 
   findOneMaterial(id: string) {
     return this.materialRepository.findOne({
-      where: {
-        idMaterial: id,
-      },
+      where: { idMaterial: id },
     });
   }
 
@@ -76,16 +71,15 @@ export class ConfigProductService {
     return this.materialRepository.update(id, updateMaterialDto);
   }
 
+  // Soft delete: Actualiza estado a false
   removeMaterial(id: string) {
     return this.materialRepository.update(id, { estado: false });
   }
 
-  //PRESENTACION
+  // PRESENTACION
 
   createPresentacion(createPresentacionDto: CreatePresentacionDto) {
-    const newPresentacion = this.materialRepository.create(
-      createPresentacionDto,
-    );
+    const newPresentacion = this.presentacionRepository.create(createPresentacionDto);
     return this.presentacionRepository.save(newPresentacion);
   }
 
@@ -95,9 +89,7 @@ export class ConfigProductService {
 
   findOnePresentacion(id: string) {
     return this.presentacionRepository.findOne({
-      where: {
-        idPresentacion: id,
-      },
+      where: { idPresentacion: id },
     });
   }
 
@@ -105,6 +97,7 @@ export class ConfigProductService {
     return this.presentacionRepository.update(id, updatePresentacionDto);
   }
 
+  // veriificar con paquito si solo desactiva el estado o quiere borrado :(
   removePresentacion(id: string) {
     return this.presentacionRepository.update(id, { estado: false });
   }
