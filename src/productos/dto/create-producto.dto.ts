@@ -1,4 +1,4 @@
-import { IsDecimal, IsString, MinLength, Min } from 'class-validator';
+import { IsDecimal, IsString, MinLength, Min, IsNumber } from 'class-validator';
 
 export class CreateProductoDto {
   @IsString()
@@ -25,7 +25,7 @@ export class CreateProductoDto {
   @MinLength(1)
   imagen: string;
 
-  @IsDecimal() 
+  @IsNumber({maxDecimalPlaces: 2})
   @Min(0)  
   precio: number;
 }
