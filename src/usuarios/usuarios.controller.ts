@@ -10,6 +10,7 @@ import {
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { LoginDto } from './dto/logrio-usuario.dto';
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -25,12 +26,9 @@ export class UsuariosController {
     return this.usuariosService.findAllAdmin();
   }
 
-  @Get(':correo/:contrasena')
-  findOne(
-    @Param('correo') correo: string,
-    @Param('contrasena') contrasena: string,
-  ) {
-    return this.usuariosService.findOneLogin(correo, contrasena);
+  @Post('/login')
+  login(@Body() loginDto: LoginDto) {
+    return this.usuariosService.login(loginDto);
   }
 
   @Patch(':id')

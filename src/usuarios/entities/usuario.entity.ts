@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Persona } from 'src/personas/entities/persona.entity';
 
 @Entity({ name: 'usuario' })
 export class Usuario {
@@ -14,7 +21,8 @@ export class Usuario {
   @Column('text')
   rol: string;
 
-  @Column('text')
+  @OneToOne(() => Persona, { cascade: true })
+  @JoinColumn()
   idPersona: string;
 
   @Column('boolean', { default: true })
