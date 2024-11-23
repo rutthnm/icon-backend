@@ -25,7 +25,4 @@ export class UpdatePersonaDto {
   @MinLength(1)
   @IsOptional()
   telefono?: string;
-
-  @IsOptional()
-  estado?: boolean; 
 }

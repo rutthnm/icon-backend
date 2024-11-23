@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'detalleVenta' })
 export class detalleVenta {
   @PrimaryGeneratedColumn('uuid')
   idDetalleVenta: string;
@@ -22,4 +22,7 @@ export class detalleVenta {
 
   @Column('text')
   idVenta: string;
+
+  @Column('boolean', { default: true })
+  estado: boolean;
 }

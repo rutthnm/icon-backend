@@ -1,11 +1,8 @@
-import { IsString, IsBoolean, IsOptional } from 'class-validator';
+import { IsString, IsOptional, MinLength } from 'class-validator';
 
 export class UpdateCategoriaDto {
   @IsString()
+  @MinLength(1)
   @IsOptional()
   nombre?: string;
-
-  @IsBoolean()
-  @IsOptional()
-  estado?: boolean;
 }

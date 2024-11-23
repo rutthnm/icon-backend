@@ -1,11 +1,11 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'usuario' })
 export class Usuario {
   @PrimaryGeneratedColumn('uuid')
   idUsuario: string;
 
-  @Column('text')
+  @Column('text', { unique: true })
   correo: string;
 
   @Column('text')
@@ -20,4 +20,3 @@ export class Usuario {
   @Column('boolean', { default: true })
   estado: boolean;
 }
-

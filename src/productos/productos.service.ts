@@ -19,7 +19,11 @@ export class ProductosService {
   }
 
   findAll() {
-    return this.productoRepository.find();
+    return this.productoRepository.find({
+      where: {
+        estado: true,
+      },
+    });
   }
 
   findOne(id: string) {

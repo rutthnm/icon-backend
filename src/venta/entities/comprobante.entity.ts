@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'comprobante' })
 export class Comprobante {
   @PrimaryGeneratedColumn('uuid')
   idComprobante: string;
@@ -16,4 +16,7 @@ export class Comprobante {
 
   @Column('text')
   idVenta: string;
+
+  @Column('boolean', { default: true })
+  estado: boolean;
 }
