@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'producto' })
-export class Productos {
+export class Producto {
   @PrimaryGeneratedColumn('uuid')
-  idProduto: string;
+  idProducto: string;
 
   @Column('text')
   idCategoria: string;
