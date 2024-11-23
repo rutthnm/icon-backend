@@ -1,4 +1,10 @@
-import { IsString, IsDecimal, IsDateString, IsNotEmpty } from 'class-validator';
+import {
+  IsString,
+  IsDateString,
+  IsNumber,
+  IsPositive,
+  Min,
+} from 'class-validator';
 
 export class CreateVentaDto {
   @IsString()
@@ -7,10 +13,14 @@ export class CreateVentaDto {
   @IsDateString()
   fecha: Date;
 
-  @IsDecimal()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
+  @Min(0)
   subTotal: number;
 
-  @IsDecimal()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
+  @Min(0)
   igv: number;
 
   @IsString()

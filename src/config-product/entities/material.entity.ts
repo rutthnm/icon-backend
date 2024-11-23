@@ -1,12 +1,11 @@
-
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'material' })
 export class Material {
   @PrimaryGeneratedColumn('uuid')
   idMaterial: string;
 
-  @Column('text')
+  @Column('text', { unique: true })
   nombre: string;
 
   @Column('boolean')

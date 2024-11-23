@@ -1,25 +1,25 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity()  
+@Entity({ name: 'persona' })
 export class Persona {
-  @PrimaryGeneratedColumn('uuid')  
-  id: string; 
+  @PrimaryGeneratedColumn('uuid')
+  idPersona: string;
 
-  @Column()  
+  @Column('text')
   nombres: string;
 
-  @Column()  
+  @Column('text')
   apellidos: string;
 
-  @Column()  
+  @Column('text')
   documento: string;
 
-  @Column()  
+  @Column('text', { unique: true })
   nDocumento: string;
 
-  @Column()  
+  @Column('text')
   telefono: string;
 
-  @Column({ default: true })  
+  @Column('boolean', { default: true })
   estado: boolean;
 }

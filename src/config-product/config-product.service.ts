@@ -32,7 +32,11 @@ export class ConfigProductService {
   }
 
   findAllCategoria() {
-    return this.categoriaRepository.find();
+    return this.categoriaRepository.find({
+      where: {
+        estado: true,
+      },
+    });
   }
 
   findOneCategoria(id: string) {
@@ -58,7 +62,11 @@ export class ConfigProductService {
   }
 
   findAllMaterial() {
-    return this.materialRepository.find();
+    return this.materialRepository.find({
+      where: {
+        estado: true,
+      },
+    });
   }
 
   findOneMaterial(id: string) {
@@ -79,12 +87,18 @@ export class ConfigProductService {
   // PRESENTACION
 
   createPresentacion(createPresentacionDto: CreatePresentacionDto) {
-    const newPresentacion = this.presentacionRepository.create(createPresentacionDto);
+    const newPresentacion = this.presentacionRepository.create(
+      createPresentacionDto,
+    );
     return this.presentacionRepository.save(newPresentacion);
   }
 
   findAllPresentacion() {
-    return this.presentacionRepository.find();
+    return this.presentacionRepository.find({
+      where: {
+        estado: true,
+      },
+    });
   }
 
   findOnePresentacion(id: string) {

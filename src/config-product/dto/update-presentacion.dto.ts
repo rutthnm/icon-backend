@@ -1,11 +1,8 @@
-import { IsString, IsBoolean, IsOptional } from 'class-validator';
+import { IsString, MinLength, IsOptional } from 'class-validator';
 
 export class UpdatePresentacionDto {
   @IsString()
+  @MinLength(1)
   @IsOptional()
   nombre?: string;
-
-  @IsBoolean()
-  @IsOptional()
-  estado?: boolean;
 }

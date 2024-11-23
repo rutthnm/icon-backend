@@ -1,4 +1,4 @@
-import { IsString, IsDecimal, IsInt, IsOptional } from 'class-validator';
+import { IsString, IsNumber, IsInt, IsOptional, IsPositive, Min } from 'class-validator';
 
 export class UpdateDetalleVentaDto {
   @IsOptional()
@@ -6,19 +6,27 @@ export class UpdateDetalleVentaDto {
   idProducto?: string;
 
   @IsOptional()
-  @IsDecimal()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
+  @Min(0)
   alturaM?: number;
 
   @IsOptional()
-  @IsDecimal()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
+  @Min(0)
   baseM?: number;
 
   @IsOptional()
   @IsInt()
+  @IsPositive()
+  @Min(0)
   cantidad?: number;
 
   @IsOptional()
-  @IsDecimal()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive()
+  @Min(0)
   precioTotal?: number;
 
   @IsOptional()

@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'producto' })
 export class Productos {
   @PrimaryGeneratedColumn('uuid')
   idProduto: string;
@@ -26,6 +26,6 @@ export class Productos {
   @Column('decimal', { precision: 7, scale: 2 })
   precio: number;
 
-  @Column('text', { default: true })
+  @Column('boolean', { default: true })
   estado: boolean;
 }

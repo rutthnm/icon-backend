@@ -1,10 +1,7 @@
-import { IsString, IsBoolean, IsNotEmpty } from 'class-validator';
+import { IsString, MinLength } from 'class-validator';
 
 export class CreateMaterialDto {
   @IsString()
-  @IsNotEmpty()
+  @MinLength(1)
   nombre: string;
-
-  @IsBoolean()
-  estado: boolean;
 }

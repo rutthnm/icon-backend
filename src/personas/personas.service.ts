@@ -21,7 +21,7 @@ export class PersonasService {
   // Actualizar una persona
   async update(id: string, updatePersonaDto: UpdatePersonaDto) {
     const persona = await this.personaRepository.preload({
-      id, // Usamos 'id' para encontrar la persona, ya que 'id' es el UUID
+      idPersona: id,
       ...updatePersonaDto, // Asignamos los valores que queremos actualizar
     });
 
@@ -34,7 +34,11 @@ export class PersonasService {
 
   // Eliminar (o desactivar) una persona
   async remove(id: string) {
-    const persona = await this.personaRepository.findOne({ where: { id } });
+    const persona = await this.personaRepository.findOne({
+      where: {
+        idPersona: id,
+      },
+    });
 
     if (!persona) {
       throw new NotFoundException(`Persona con id ${id} no encontrada`);
@@ -52,7 +56,9 @@ export class PersonasService {
 
   // Obtener una persona específica por ID
   async findOne(id: string) {
-    const persona = await this.personaRepository.findOne({ where: { id } });
+    const persona = await this.personaRepository.findOne({
+      where: { idPersona: id },
+    });
 
     if (!persona) {
       throw new NotFoundException(`Persona con id ${id} no encontrada`);
