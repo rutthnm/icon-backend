@@ -1,4 +1,7 @@
-import { IsString, IsEmail } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsString, IsEmail, ValidateNested, IsNotEmpty } from 'class-validator';
+import { CreatePersonaDto } from 'src/personas/dto/create-persona.dto';
+import { Persona } from 'src/personas/entities/persona.entity';
 
 export class CreateUsuarioDto {
   @IsEmail()
@@ -10,6 +13,8 @@ export class CreateUsuarioDto {
   @IsString()
   rol: string;
 
-  @IsString()
-  idPersona: string;
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => CreatePersonaDto)
+  idPersona: Persona;
 }
