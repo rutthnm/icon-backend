@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { CreateProductoDto } from './dto/create-producto.dto';
-import { UpdateProductoDto } from './dto/update-producto.dto';
+
 import { InjectRepository } from '@nestjs/typeorm';
-import { Producto } from './entities/producto.entity';
+
 import { Repository } from 'typeorm';
+import { Producto } from './entities/producto.entity';
+
+import { UpdateProductoDto } from './dto/update-producto.dto';
+import { Categoria } from 'src/config-product/entities/categoria.entity';
+import { Material } from 'src/config-product/entities/material.entity';
+import { Presentacion } from 'src/config-product/entities/presentacion.entity';
+import { CreateProductoDto } from './dto/create-producto.dto';
 
 @Injectable()
 export class ProductosService {
@@ -12,11 +18,38 @@ export class ProductosService {
     private readonly productoRepository: Repository<Producto>,
   ) {}
 
-  create(createProductoDto: CreateProductoDto) {
-    const newProducto = this.productoRepository.create(createProductoDto);
 
+  async create(createProductoDto: CreateProductoDto) {
+  
+    const categoria = await this.productoRepository.manager.findOne(Categoria, {
+      where: { idCategoria: createProductoDto.idCategoria },
+    });
+  
+    const material = await this.productoRepository.manager.findOne(Material, {
+      where: { idMaterial: createProductoDto.idMaterial },
+    });
+  
+    const presentacion = await this.productoRepository.manager.findOne(Presentacion, {
+      where: { idPresentacion: createProductoDto.idPresentacion },
+    });
+  
+
+    if (!categoria || !material || !presentacion) {
+      throw new Error('Una o más relaciones no fueron encontradas.');
+    }
+  
+
+    const newProducto = this.productoRepository.create({
+      ...createProductoDto,  // Los demás datos del DTO
+      idCategoria: categoria,  // Relacionar la categoría completa
+      idMaterial: material,    // Relacionar el material completo
+      idPresentacion: presentacion,  // Relacionar la presentación completa
+    });
+  
+    // Guardar el nuevo producto
     return this.productoRepository.save(newProducto);
   }
+  
 
   findAll() {
     return this.productoRepository.find({
@@ -34,11 +67,45 @@ export class ProductosService {
     });
   }
 
-  update(id: string, updateProductoDto: UpdateProductoDto) {
-    return this.productoRepository.update(id, updateProductoDto);
+  async update(id: string, updateProductoDto: UpdateProductoDto) {
+    
+    const categoria = await this.productoRepository.manager.findOne(Categoria, {
+      where: { idCategoria: updateProductoDto.idCategoria },
+    });
+  
+    const material = await this.productoRepository.manager.findOne(Material, {
+      where: { idMaterial: updateProductoDto.idMaterial },
+    });
+  
+    const presentacion = await this.productoRepository.manager.findOne(Presentacion, {
+      where: { idPresentacion: updateProductoDto.idPresentacion },
+    });
+  
+    
+    if (!categoria || !material || !presentacion) {
+      throw new Error('Una o más relaciones no fueron encontradas.');
+    }
+  
+    const producto = await this.productoRepository.preload({
+      idProducto: id,
+      ...updateProductoDto,  // Desestructurar el DTO de actualización
+      idCategoria: categoria,  // Relacionar la categoría completa
+      idMaterial: material,    // Relacionar el material completo
+      idPresentacion: presentacion,  // Relacionar la presentación completa
+    });
+  
+
+    if (!producto) {
+      throw new Error(`Producto con id ${id} no encontrado`);
+    }
+  
+
+    return this.productoRepository.save(producto);
   }
+  
 
   remove(id: string) {
     return this.productoRepository.update(id, { estado: false });
   }
+  
 }
