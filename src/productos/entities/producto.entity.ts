@@ -1,12 +1,27 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Categoria } from 'src/config-product/entities/categoria.entity';
+import { Material } from 'src/config-product/entities/material.entity';
+import { Presentacion } from 'src/config-product/entities/presentacion.entity';
+import { Column, Entity, PrimaryGeneratedColumn,  ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity({ name: 'producto' })
 export class Producto {
   @PrimaryGeneratedColumn('uuid')
   idProducto: string;
 
-  @Column('text')
-  idCategoria: string;
+  
+  @ManyToOne(() => Categoria, (categoria) => categoria.idCategoria, { eager: true })
+  @JoinColumn({ name: 'idCategoria' })
+  idCategoria: Categoria;
+
+  @ManyToOne(() => Presentacion, (presentacion) => presentacion.idPresentacion, { eager: true })
+  @JoinColumn({ name: 'idPresentacion' })
+  idPresentacion: Presentacion;
+
+  @ManyToOne(() => Material, (material) => material.idMaterial, { eager: true })
+  @JoinColumn({ name: 'idMaterial' })
+  idMaterial: Material;
+
+  
 
   @Column('text')
   nombre: string;
@@ -14,11 +29,7 @@ export class Producto {
   @Column('text')
   descripcion: string;
 
-  @Column('text')
-  idMaterial: string;
-
-  @Column('text')
-  idPresentacion: string;
+ 
 
   @Column('text')
   imagen: string;
