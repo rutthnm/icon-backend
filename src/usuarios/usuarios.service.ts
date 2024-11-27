@@ -6,8 +6,8 @@ import { Usuario } from './entities/usuario.entity';
 import { Repository } from 'typeorm';
 import { Persona } from 'src/personas/entities/persona.entity';
 import * as bcrypt from 'bcrypt';
-import { AuthService } from './auth/jwt.service';
 import { LoginDto } from './dto/logrio-usuario.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsuariosService {
@@ -16,7 +16,7 @@ export class UsuariosService {
     private readonly usuarioRepository: Repository<Usuario>,
     @InjectRepository(Persona)
     private readonly personaRepository: Repository<Persona>,
-    private readonly jwtService: AuthService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async create({ idPersona, ...createUsuarioDto }: CreateUsuarioDto) {
@@ -49,41 +49,46 @@ export class UsuariosService {
     }
   }
 
-  async findOne(correo: string) {
-    return await this.usuarioRepository.findOne({
-      where: {
-        correo: correo,
-      },
-    });
-  }
-
-  findAllAdmin() {
-    return this.usuarioRepository.find({
+  async findAllAdmin() {
+    return await this.usuarioRepository.find({
       where: {
         rol: 'administrador',
         estado: true,
       },
+      select: ['idUsuario', 'correo'],
     });
   }
 
-  async login({ correo, contrasena }: LoginDto): Promise<string> {
-    try {
-      const usuario = await this.usuarioRepository.findOne({
-        where: { correo },
-      });
+  async login({ correo, contrasena }: LoginDto) {
+    const usuario = await this.usuarioRepository.findOne({
+      where: { correo },
+      relations: ['idPersona'],
+    });
 
-      if (!usuario || !bcrypt.compareSync(contrasena, usuario.contrasena)) {
-        throw new Error('Credenciales incorrectas');
-      }
-
-      const payload = { id: usuario.idUsuario, rol: usuario.rol };
-      return this.jwtService.generarJWT(payload);
-    } catch (error) {
+    if (usuario.estado === false) {
       throw new HttpException(
-        'Error al registrarse, asegure que sus datos esten colocados correctamente',
-        HttpStatus.BAD_REQUEST,
+        'Esta cuenta fue eliminada, cree otra cuenta',
+        HttpStatus.NOT_FOUND,
       );
     }
+
+    if (!usuario || !bcrypt.compareSync(contrasena, usuario.contrasena)) {
+      throw new HttpException(
+        'Credenciales incorrectas',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    const payload = {
+      id: usuario.idUsuario,
+      rol: usuario.rol,
+      estado: usuario.estado,
+    };
+    const { contrasena: _, ...user } = usuario;
+    return {
+      usuario: user,
+      jwt: this.jwtService.sign(payload),
+    };
   }
 
   update(id: string, updateUsuarioDto: UpdateUsuarioDto) {

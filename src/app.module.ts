@@ -6,10 +6,6 @@ import { ProductosModule } from './productos/productos.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { ConfigProductModule } from './config-product/config-product.module';
 import { VentaModule } from './venta/venta.module';
-import { Producto } from './productos/entities/producto.entity';
-import { Categoria } from './config-product/entities/categoria.entity';
-import { Presentacion } from './config-product/entities/presentacion.entity';
-import { Material } from './config-product/entities/material.entity';
 
 @Module({
   imports: [
@@ -24,7 +20,6 @@ import { Material } from './config-product/entities/material.entity';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([Producto,Categoria,Presentacion,Material]),
     PersonasModule,
     ProductosModule,
     UsuariosModule,
