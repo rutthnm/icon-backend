@@ -1,8 +1,6 @@
-import {  IsString, MinLength, Min, IsNumber, IsBoolean} from 'class-validator';
-
+import { IsString, MinLength, Min, IsNumber } from 'class-validator';
 
 export class CreateProductoDto {
-
   @IsString()
   @MinLength(1)
   idCategoria: string;

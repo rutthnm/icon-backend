@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch } from '@nestjs/common';
 import { VentaService } from './venta.service';
 import {
   CreateComprobanteDto,
   CreateDetalleVentaDto,
+  CreateMasterDto,
   CreateVentaDto,
+  UpdateMasterDto,
 } from './dto';
 
 @Controller('venta')
@@ -41,5 +43,19 @@ export class VentaController {
   @Get('comprobante/:id')
   findOneComprobante(@Param('id') id: string) {
     return this.ventaService.findOneComprobante(id);
+  }
+
+  //MASTER
+  @Post('master')
+  createMaster(@Body() createMaster: CreateMasterDto) {
+    return this.ventaService.createMaster(createMaster);
+  }
+
+  @Patch('master/:id')
+  updateMaster(
+    @Param('id') id: string,
+    @Body() updateMasterDto: UpdateMasterDto,
+  ) {
+    return this.ventaService.update(id, updateMasterDto);
   }
 }
