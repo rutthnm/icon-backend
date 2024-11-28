@@ -5,13 +5,13 @@ export class Persona {
   @PrimaryGeneratedColumn('uuid')
   idPersona: string;
 
-  @Column('text')
+  @Column('text', { nullable: false }) // Cambiar a false si NO deben permitir valores nulos
   nombres: string;
 
-  @Column('text')
+  @Column('text', { nullable: false }) // Cambiar a false si NO deben permitir valores nulos
   apellidos: string;
 
-  @Column('text')
+  @Column('text', { nullable: false }) // Cambiar a false si NO deben permitir valores nulos
   documento: string;
 
   @Column('text', { unique: true })

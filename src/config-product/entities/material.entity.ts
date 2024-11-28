@@ -13,6 +13,6 @@ export class Material {
   @Column('text', { unique: true })
   nombre: string;
 
-  @Column('boolean')
+  @Column('boolean', {default: true})
   estado: boolean;
 }

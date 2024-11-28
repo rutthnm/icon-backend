@@ -1,4 +1,4 @@
-import { IsString, IsInt, IsNumber, IsPositive, Min } from 'class-validator';
+import { IsString, IsInt, IsNumber, IsPositive, Min, IsOptional } from 'class-validator';
 
 export class CreateDetalleVentaDto {
   @IsString()
@@ -7,12 +7,14 @@ export class CreateDetalleVentaDto {
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsPositive()
   @Min(0)
-  alturaM: number;
+  @IsOptional()
+  alturaM?: number;
 
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsPositive()
   @Min(0)
-  baseM: number;
+  @IsOptional()
+  baseM?: number;
 
   @IsInt()
   @IsPositive()

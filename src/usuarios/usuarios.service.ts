@@ -33,7 +33,6 @@ export class UsuariosService {
           idPersona: newPersona.idPersona,
         });
         await this.usuarioRepository.save(newUsuario);
-
         return newUsuario;
       } else {
         throw new HttpException(
@@ -61,21 +60,20 @@ export class UsuariosService {
 
   async login({ correo, contrasena }: LoginDto) {
     const usuario = await this.usuarioRepository.findOne({
-      where: { correo },
-      relations: ['idPersona'],
+      where: {correo}
     });
-
-    if (usuario.estado === false) {
-      throw new HttpException(
-        'Esta cuenta fue eliminada, cree otra cuenta',
-        HttpStatus.NOT_FOUND,
-      );
-    }
 
     if (!usuario || !bcrypt.compareSync(contrasena, usuario.contrasena)) {
       throw new HttpException(
         'Credenciales incorrectas',
         HttpStatus.UNAUTHORIZED,
+      );
+    }
+    
+    if (usuario.estado === false) {
+      throw new HttpException(
+        'Esta cuenta fue eliminada, cree otra cuenta',
+        HttpStatus.NOT_FOUND,
       );
     }
 
