@@ -5,10 +5,11 @@ import { Column, Entity, PrimaryGeneratedColumn , OneToMany} from 'typeorm';
 @Entity({ name: 'presentacion' })
 export class Presentacion {
   @PrimaryGeneratedColumn('uuid')
+  idPresentacion: string;
 
   @OneToMany(() => Producto, (producto) => producto.idPresentacion)
   productos: Producto[];
-  idPresentacion: string;
+  
 
   @Column('text', { unique: true })
   nombre: string;
