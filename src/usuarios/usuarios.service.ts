@@ -1,12 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
-import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Usuario } from './entities/usuario.entity';
 import { Repository } from 'typeorm';
 import { Persona } from 'src/personas/entities/persona.entity';
 import * as bcrypt from 'bcrypt';
-import { LoginDto } from './dto/logrio-usuario.dto';
+import { LoginDto } from './dto/login-usuario.dto';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -30,7 +29,7 @@ export class UsuariosService {
         const newUsuario = this.usuarioRepository.create({
           contrasena: bcrypt.hashSync(contrasena, 10),
           ...createUsuario,
-          idPersona: newPersona.idPersona,
+          idPersona: newPersona,
         });
         await this.usuarioRepository.save(newUsuario);
         return newUsuario;
@@ -60,8 +59,11 @@ export class UsuariosService {
 
   async login({ correo, contrasena }: LoginDto) {
     const usuario = await this.usuarioRepository.findOne({
-      where: {correo}
+      where: { correo },
+      relations: ['idPersona'],
     });
+
+    console.log(usuario);
 
     if (!usuario || !bcrypt.compareSync(contrasena, usuario.contrasena)) {
       throw new HttpException(
@@ -69,7 +71,7 @@ export class UsuariosService {
         HttpStatus.UNAUTHORIZED,
       );
     }
-    
+
     if (usuario.estado === false) {
       throw new HttpException(
         'Esta cuenta fue eliminada, cree otra cuenta',
@@ -80,20 +82,22 @@ export class UsuariosService {
     const payload = {
       id: usuario.idUsuario,
       rol: usuario.rol,
+      idPersona: usuario.idUsuario,
       estado: usuario.estado,
     };
-    const { contrasena: _, ...user } = usuario;
+
+    const { idPersona } = usuario;
+
+    const { nombres, apellidos } = idPersona;
+
     return {
-      usuario: user,
+      usuario: {
+        idPersona: {
+          nombres: nombres.split(' ')[0], // Primer nombre
+          apellidos: apellidos.split(' ')[0], // Primer apellido
+        },
+      },
       jwt: this.jwtService.sign(payload),
     };
-  }
-
-  update(id: string, updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuarioRepository.update(id, updateUsuarioDto);
-  }
-
-  remove(id: string) {
-    return this.usuarioRepository.update(id, { estado: false });
   }
 }

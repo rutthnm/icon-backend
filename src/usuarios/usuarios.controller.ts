@@ -1,19 +1,9 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
-import { UpdateUsuarioDto } from './dto/update-usuario.dto';
-import { LoginDto } from './dto/logrio-usuario.dto';
-import { RolesGuard } from 'src/common/roles.guard';
-import { Roles } from 'src/common/roles.decorator';
+import { LoginDto } from './dto/login-usuario.dto';
+import { RolesGuard } from 'src/common/guard/roles.guard';
+import { Roles } from 'src/common/decorator/roles.decorator';
 
 @Controller('usuarios')
 @UseGuards(RolesGuard)
@@ -34,10 +24,5 @@ export class UsuariosController {
   @Post('/login')
   login(@Body() loginDto: LoginDto) {
     return this.usuariosService.login(loginDto);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuariosService.update(id, updateUsuarioDto);
   }
 }
