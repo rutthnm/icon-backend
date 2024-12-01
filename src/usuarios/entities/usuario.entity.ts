@@ -21,9 +21,9 @@ export class Usuario {
   @Column('text')
   rol: string;
 
-  @OneToOne(() => Persona, { cascade: true })
-  @JoinColumn()
-  idPersona: string;
+  @OneToOne(() => Persona, (persona) => persona.usuario, { cascade: true })
+  @JoinColumn({ name: 'idPersona' })
+  idPersona: Persona;
 
   @Column('boolean', { default: true })
   estado: boolean;

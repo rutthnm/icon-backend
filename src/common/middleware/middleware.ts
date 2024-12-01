@@ -24,7 +24,7 @@ export class AuthMiddleware implements NestMiddleware {
       next();
     } catch (error) {
       throw new HttpException(
-        'Token inválido  o expirado',
+        'Token inválido o expirado',
         HttpStatus.UNAUTHORIZED,
       );
     }

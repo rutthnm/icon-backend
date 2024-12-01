@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Usuario } from 'src/usuarios/entities/usuario.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
 
 @Entity({ name: 'persona' })
 export class Persona {
@@ -19,6 +20,9 @@ export class Persona {
 
   @Column('text')
   telefono: string;
+
+  @OneToOne(() => Usuario, (usuario) => usuario.idUsuario)
+  usuario: Usuario;
 
   @Column('boolean', { default: true })
   estado: boolean;

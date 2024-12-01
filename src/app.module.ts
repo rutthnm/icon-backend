@@ -7,8 +7,7 @@ import { UsuariosModule } from './usuarios/usuarios.module';
 import { ConfigProductModule } from './config-product/config-product.module';
 import { VentaModule } from './venta/venta.module';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthMiddleware } from './common/middleware';
-import { UsuariosController } from './usuarios/usuarios.controller';
+import { AuthMiddleware } from './common/middleware/middleware';
 
 @Module({
   imports: [
