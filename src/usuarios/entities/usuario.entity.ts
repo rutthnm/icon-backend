@@ -15,7 +15,7 @@ export class Usuario {
   @Column('text', { unique: true })
   correo: string;
 
-  @Column('text')
+  @Column('text', { select: false })
   contrasena: string;
 
   @Column('text')
@@ -23,7 +23,7 @@ export class Usuario {
 
   @OneToOne(() => Persona, (persona) => persona.usuario, { cascade: true })
   @JoinColumn({ name: 'idPersona' })
-  idPersona: Persona;
+  persona: Persona;
 
   @Column('boolean', { default: true })
   estado: boolean;

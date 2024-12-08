@@ -1,4 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Usuario } from './entities/usuario.entity';
@@ -18,32 +22,26 @@ export class UsuariosService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async create({ idPersona, ...createUsuarioDto }: CreateUsuarioDto) {
+  async create({ persona, ...createUsuarioDto }: CreateUsuarioDto) {
     try {
-      if (idPersona) {
-        const newPersona = this.personaRepository.create(idPersona);
+      if (persona) {
+        const newPersona = this.personaRepository.create(persona);
         await this.personaRepository.save(newPersona);
-
         const { contrasena, ...createUsuario } = createUsuarioDto;
 
         const newUsuario = this.usuarioRepository.create({
           contrasena: bcrypt.hashSync(contrasena, 10),
           ...createUsuario,
-          idPersona: newPersona,
+          persona: newPersona,
         });
+        console.log('usuario: ', newUsuario);
         await this.usuarioRepository.save(newUsuario);
         return newUsuario;
       } else {
-        throw new HttpException(
-          'idPersona es requerido',
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new BadRequestException('idPersona es requerido');
       }
     } catch (error) {
-      throw new HttpException(
-        'El usuario fue creado incorrectamente',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException('El usuario fue creado incorrectamente');
     }
   }
 
@@ -60,43 +58,28 @@ export class UsuariosService {
   async login({ correo, contrasena }: LoginDto) {
     const usuario = await this.usuarioRepository.findOne({
       where: { correo },
-      relations: ['idPersona'],
+      relations: ['persona'],
     });
 
-    console.log(usuario);
-
     if (!usuario || !bcrypt.compareSync(contrasena, usuario.contrasena)) {
-      throw new HttpException(
-        'Credenciales incorrectas',
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-
-    if (usuario.estado === false) {
-      throw new HttpException(
-        'Esta cuenta fue eliminada, cree otra cuenta',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new UnauthorizedException('Credenciales incorrectas');
     }
 
     const payload = {
       id: usuario.idUsuario,
       rol: usuario.rol,
-      idPersona: usuario.idUsuario,
+      persona: usuario.persona,
       estado: usuario.estado,
     };
 
-    const { idPersona } = usuario;
+    const { rol, persona } = usuario;
 
-    const { nombres, apellidos } = idPersona;
+    const { nombres, apellidos } = persona;
 
     return {
-      usuario: {
-        idPersona: {
-          nombres: nombres.split(' ')[0], // Primer nombre
-          apellidos: apellidos.split(' ')[0], // Primer apellido
-        },
-      },
+      rol: rol,
+      nombre: nombres.split(' ')[0],
+      apellido: apellidos.split(' ')[0],
       jwt: this.jwtService.sign(payload),
     };
   }

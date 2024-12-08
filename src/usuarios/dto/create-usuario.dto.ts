@@ -16,5 +16,5 @@ export class CreateUsuarioDto {
   @IsNotEmpty()
   @ValidateNested()
   @Type(() => CreatePersonaDto)
-  idPersona: Persona;
+  persona: Persona;
 }
