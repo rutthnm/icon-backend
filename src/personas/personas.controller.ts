@@ -1,39 +1,32 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  Param,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { PersonasService } from './personas.service';
-import { CreatePersonaDto } from './dto/create-persona.dto';
 import { UpdatePersonaDto } from './dto/update-persona.dto';
+import { RolesGuard } from 'src/common/guard/roles.guard';
+import { Roles } from 'src/common/decorator/roles.decorator';
 
 @Controller('personas')
+@UseGuards(RolesGuard)
 export class PersonasController {
   constructor(private readonly personasService: PersonasService) {}
 
-  // Crear una nueva persona
-  @Post()
-  create(@Body() createPersonaDto: CreatePersonaDto) {
-    return this.personasService.create(createPersonaDto);
-  }
-
-  // Obtener todas las personas
-  @Get()
-  findAll() {
-    return this.personasService.findAll();
-  }
-
-  // Obtener una persona por ID
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.personasService.findOne(id);
+  @Get('perfil')
+  @Roles('cliente', 'administrador')
+  findOne(@Req() req: Request) {
+    const idPersona = req['user'].persona.idPersona;
+    return this.personasService.findOne(idPersona);
   }
 
   // Actualizar una persona
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePersonaDto: UpdatePersonaDto) {
     return this.personasService.update(id, updatePersonaDto);
-  }
-
-  // Eliminar (desactivar) una persona
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.personasService.remove(id);
   }
 }

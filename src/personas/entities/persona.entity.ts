@@ -1,5 +1,12 @@
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+} from 'typeorm';
 
 @Entity({ name: 'persona' })
 export class Persona {
@@ -26,4 +33,14 @@ export class Persona {
 
   @Column('boolean', { default: true })
   estado: boolean;
+
+  @BeforeInsert()
+  verificarDocumento() {
+    this.documento = this.documento.toUpperCase();
+  }
+
+  @BeforeUpdate()
+  verificarDocumentoActualizar() {
+    this.verificarDocumento();
+  }
 }
