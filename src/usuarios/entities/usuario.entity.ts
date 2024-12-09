@@ -15,7 +15,7 @@ export class Usuario {
   @Column('text', { unique: true })
   correo: string;
 
-  @Column('text', { select: false })
+  @Column('text')
   contrasena: string;
 
   @Column('text')
