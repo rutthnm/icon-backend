@@ -1,8 +1,7 @@
 import {
   Injectable,
   NestMiddleware,
-  HttpException,
-  HttpStatus,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response, NextFunction } from 'express';
@@ -18,15 +17,18 @@ export class AuthMiddleware implements NestMiddleware {
       return next();
     }
 
+    if (!token.startsWith('Bearer ')) {
+      throw new UnauthorizedException(
+        'Token inválido. Asegúrate de usar el formato "Bearer <token>".',
+      );
+    }
+
     try {
       const decoded = this.jwtService.verify(token.split(' ')[1]);
       req['user'] = decoded;
       next();
     } catch (error) {
-      throw new HttpException(
-        'Token inválido o expirado',
-        HttpStatus.UNAUTHORIZED,
-      );
+      throw new UnauthorizedException('Token inválido o expirado');
     }
   }
 }

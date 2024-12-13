@@ -34,7 +34,6 @@ export class UsuariosService {
           ...createUsuario,
           persona: newPersona,
         });
-        console.log('usuario: ', newUsuario);
         await this.usuarioRepository.save(newUsuario);
         return newUsuario;
       } else {
