@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ProductosService } from './productos.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
@@ -21,8 +22,8 @@ export class ProductosController {
   }
 
   @Get()
-  findAll() {
-    return this.productosService.findAll();
+  allProduct() {
+    return this.productosService.allProduct();
   }
 
   @Get(':id')

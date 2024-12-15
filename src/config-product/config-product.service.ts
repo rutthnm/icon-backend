@@ -36,6 +36,7 @@ export class ConfigProductService {
       where: {
         estado: true,
       },
+      select: ['idCategoria', 'nombre']
     });
   }
 
@@ -66,6 +67,7 @@ export class ConfigProductService {
       where: {
         estado: true,
       },
+      select: ['idMaterial', 'nombre']
     });
   }
 
@@ -98,6 +100,7 @@ export class ConfigProductService {
       where: {
         estado: true,
       },
+      select: ['idPresentacion', 'nombre']
     });
   }
 
