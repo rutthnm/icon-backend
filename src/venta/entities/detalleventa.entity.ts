@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Venta } from './venta.entity';
 
 @Entity({ name: 'detalle_venta' })
 export class detalleVenta {
@@ -8,10 +9,10 @@ export class detalleVenta {
   @Column('text')
   idProducto: string;
 
-  @Column('decimal', { precision: 4, scale: 2 })
+  @Column('decimal', { precision: 4, scale: 2, nullable: true })
   alturaM: number;
 
-  @Column('decimal', { precision: 4, scale: 2 })
+  @Column('decimal', { precision: 4, scale: 2, nullable: true })
   baseM: number;
 
   @Column('int')
@@ -20,8 +21,9 @@ export class detalleVenta {
   @Column('decimal', { precision: 7, scale: 2 })
   precioTotal: number;
 
-  @Column('text')
-  idVenta: string;
+  @OneToOne(() => Venta, (venta) => venta.datelleVenta)
+  @JoinColumn({name: 'idVenta'})
+  venta: Venta;
 
   @Column('boolean', { default: true })
   estado: boolean;

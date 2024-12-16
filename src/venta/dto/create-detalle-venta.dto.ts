@@ -24,8 +24,6 @@ export class CreateDetalleVentaDto {
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsPositive()
   @Min(0)
-  precioTotal: number;
-
-  @IsString()
-  idVenta: string;
+  @IsOptional()
+  precioTotal?: number;
 }
