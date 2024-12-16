@@ -2,10 +2,12 @@ import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Persona } from 'src/personas/entities/persona.entity';
+import { Venta } from 'src/venta/entities/venta.entity';
 
 @Entity({ name: 'usuario' })
 export class Usuario {
@@ -24,6 +26,9 @@ export class Usuario {
   @OneToOne(() => Persona, (persona) => persona.usuario, { cascade: true })
   @JoinColumn({ name: 'idPersona' })
   persona: Persona;
+
+  @OneToMany(() => Venta, (venta) => venta.idVenta)
+  venta: Venta[];
 
   @Column('boolean', { default: true })
   estado: boolean;

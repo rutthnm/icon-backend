@@ -1,4 +1,5 @@
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
+import { Venta } from 'src/venta/entities/venta.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -6,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToOne,
+  OneToMany,
 } from 'typeorm';
 
 @Entity({ name: 'persona' })
@@ -30,6 +32,10 @@ export class Persona {
 
   @OneToOne(() => Usuario, (usuario) => usuario.idUsuario)
   usuario: Usuario;
+
+  
+  @OneToMany(() => Venta, (venta) => venta.idVenta)
+  venta: Venta[];
 
   @Column('boolean', { default: true })
   estado: boolean;

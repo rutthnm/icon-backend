@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Venta } from './venta.entity';
 
 @Entity({ name: 'comprobante' })
 export class Comprobante {
@@ -16,6 +17,10 @@ export class Comprobante {
 
   @Column('text')
   idVenta: string;
+
+  @OneToOne(() => Venta, (venta) => venta.comprobante)
+  @JoinColumn({name: 'idVenta'})
+  venta: Venta;
 
   @Column('boolean', { default: true })
   estado: boolean;
