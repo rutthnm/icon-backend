@@ -42,7 +42,7 @@ export class VentaController {
 
   @Get('/compra/:id')
   @UseGuards(RolesGuard)
-  @Roles('administrador')
+  @Roles('cliente', 'administrador')
   compra(@Param ('id')id:string) {
    return this.ventaService.compra(id);
   } 
