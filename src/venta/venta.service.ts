@@ -25,7 +25,8 @@ export class VentaService {
     private readonly usuarioRepository: Repository<Usuario>,
     @InjectRepository(Producto)
     private readonly productoRepository: Repository<Producto>,
-  ) {}
+
+  ) { }
 
   //VENTA
   async createVenta(idUsuario: string, createVentaDto: CreateDetalleVentaDto) {
@@ -150,4 +151,226 @@ export class VentaService {
       throw new BadRequestException('ERROR AL CREAR DATO MASTER: ', error);
     }
   }
+
+  async traerCompras(idPersona: string) {
+    try {
+      // Buscar todas las ventas activas del usuario
+      const ventas = await this.ventaRepository.find({
+        where: { idPersona: idPersona, estado: true },
+      });
+  
+      // Si no hay ventas, devolver un array vacío
+      if (!ventas || ventas.length === 0) {
+        return [];
+      }
+  
+      // Iterar sobre cada venta para construir la respuesta
+      const compras = await Promise.all(
+        ventas.map(async (venta) => {
+          // Buscar el detalle de la venta asociada
+          const detalleVenta = await this.detalleVentaRepository.findOne({
+            where: { venta: { idVenta: venta.idVenta }, estado: true },
+          });
+  
+          if (!detalleVenta) {
+            throw new Error(`No se encontró detalle para la venta con ID: ${venta.idVenta}`);
+          }
+  
+          // Buscar el producto asociado al detalle
+          const producto = await this.productoRepository.findOne({
+            where: { idProducto: detalleVenta.idProducto },
+            relations: ['idCategoria'], // Cargar relaciones necesarias
+          });
+  
+          if (!producto) {
+            throw new Error(`No se encontró el producto con ID: ${detalleVenta.idProducto}`);
+          }
+
+          const fechaFormateada = moment(venta.fecha).format(
+            'HH:mm - DD/MM/YYYY',
+          );
+  
+          // Construir la respuesta de la compra
+          return { 
+            idVenta: venta.idVenta,
+            nombre: producto.nombre,
+            categoria: producto.idCategoria?.nombre || 'Sin categoría',
+            cantidad: detalleVenta.cantidad,
+            fecha: fechaFormateada,
+            monto: detalleVenta.precioTotal,
+          };
+        })
+      );
+  
+      return compras; // Retorna un array de compras
+    } catch (error) {
+      throw new BadRequestException('ERROR AL TRAER LAS COMPRAS DEL USUARIO:', error.message || error);
+    }
+  }
+
+
+  async traerVentas() {
+    try {
+      // Buscar todas las ventas activas del usuario
+      const ventas = await this.ventaRepository.find({
+        where: {  estado: true },
+      });
+  
+      // Si no hay ventas, devolver un array vacío
+      if (!ventas || ventas.length === 0) {
+        return [];
+      }
+  
+      // Iterar sobre cada venta para construir la respuesta
+      const compras = await Promise.all(
+        ventas.map(async (venta) => {
+          // Buscar el detalle de la venta asociada
+          const detalleVenta = await this.detalleVentaRepository.findOne({
+            where: { venta: { idVenta: venta.idVenta }, estado: true },
+          });
+  
+          if (!detalleVenta) {
+            throw new Error(`No se encontró detalle para la venta con ID: ${venta.idVenta}`);
+          }
+          //buscar comprobante
+          const comprobante = await this.comprobanteRepository.findOne({
+            where: { venta: { idVenta: venta.idVenta }, estado: true },
+          });
+  
+          if (!comprobante) {
+            throw new Error(`No se encontró comprobante para la venta con ID: ${venta.idVenta}`);
+          }
+
+          //buscar persona
+          const persona = await this.usuarioRepository.findOne({
+            where: { idUsuario: venta.usuario.idUsuario, estado: true },
+            relations: ['persona'],
+          });
+           
+          if (!persona) {
+            throw new Error(`No se encontró la persona con ID: ${persona.idUsuario}`);
+          }
+
+  
+          // Buscar el producto asociado al detalle
+          const producto = await this.productoRepository.findOne({
+            where: { idProducto: detalleVenta.idProducto },
+            relations: ['idCategoria'], // Cargar relaciones necesarias
+          });
+  
+          if (!producto) {
+            throw new Error(`No se encontró el producto con ID: ${detalleVenta.idProducto}`);
+          }
+
+          const fechaFormateada = moment(venta.fecha).format(
+            'HH:mm - DD/MM/YYYY',
+          );
+  
+          // Construir la respuesta de la compra
+          return { 
+            idVenta: venta.idVenta,
+            nDocumento: persona.persona.nDocumento,
+            cliente: persona.persona.nombres,
+            producto: producto.nombre,
+            cantidad: detalleVenta.cantidad,
+            tipo: comprobante.tipoComprobante,
+            fecha: fechaFormateada,
+            monto: detalleVenta.precioTotal,
+            
+          };
+        })
+      );
+  
+      return compras; // Retorna un array de compras
+    } catch (error) {
+      throw new BadRequestException('ERROR AL TRAER LAS COMPRAS DEL USUARIO:', error.message || error);
+    }
+  }
+
+  async compra(idVenta: string) {
+    try {
+      // Buscar la venta activa por ID
+      const venta = await this.ventaRepository.findOne({
+        where: { idVenta: idVenta, estado: true },
+      });
+  
+      if (!venta) {
+        throw new Error(`No se encontró la venta con ID: ${idVenta}`);
+      }
+  
+      // Buscar el detalle de la venta asociada
+      const detalleVenta = await this.detalleVentaRepository.findOne({
+        where: { venta: { idVenta: venta.idVenta }, estado: true },
+      });
+  
+      if (!detalleVenta) {
+        throw new Error(`No se encontró detalle para la venta con ID: ${idVenta}`);
+      }
+  
+      // Buscar el producto asociado al detalle
+      const producto = await this.productoRepository.findOne({
+        where: { idProducto: detalleVenta.idProducto },
+        relations: ['idCategoria'], // Cargar relaciones necesarias
+      });
+  
+      if (!producto) {
+        throw new Error(`No se encontró el producto con ID: ${detalleVenta.idProducto}`);
+      }
+
+      //buscar comprobante
+      const comprobante = await this.comprobanteRepository.findOne({
+        where: { venta: { idVenta: venta.idVenta }, estado: true },
+      });
+
+      if (!comprobante) {
+        throw new Error(`No se encontró comprobante para la venta con ID: ${venta.idVenta}`);
+      }
+
+      //buscar persona
+      const persona = await this.usuarioRepository.findOne({
+        where: { idUsuario: venta.usuario.idUsuario, estado: true },
+        relations: ['persona'],
+      });
+       
+      if (!persona) {
+        throw new Error(`No se encontró la persona con ID: ${persona.idUsuario}`);
+      }
+
+  
+      // Formatear la fecha
+      const fechaFormateada = moment(venta.fecha).format('HH:mm - DD/MM/YYYY');
+  
+
+      // Construir y retornar la respuesta
+      return {
+        comprobante: {
+          idComprobante: comprobante.idComprobante,
+          serie: comprobante.serie,
+          numeracion: comprobante.numeracion,
+          tipo: comprobante.tipoComprobante,
+        },
+        venta: {
+          nombrePersona: persona.persona.nombres,
+          apellidos: persona.persona.apellidos,
+          documento: persona.persona.documento,
+          nDocumento: persona.persona.nDocumento,
+          telefono: persona.persona.telefono,
+          fecha: fechaFormateada,
+        },
+        detalleVenta: {
+          categoria: producto.idCategoria.nombre,
+          nombreProducto: producto.nombre,
+          cantidad: detalleVenta.cantidad,
+          subTotal: venta.subTotal,
+          igv: venta.igv,
+          total: detalleVenta.precioTotal,
+        },
+      };
+    } catch (error) {
+      throw new BadRequestException('ERROR AL TRAER LA COMPRA DEL USUARIO:', error.message || error);
+    }
+  }
+  
+  
+  
 }
